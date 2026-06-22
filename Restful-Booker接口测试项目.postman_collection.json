@@ -1,0 +1,488 @@
+{
+  "info": {
+    "_postman_id": "1bc763b3-2959-4bac-bbc5-7ad3ad4a28e2",
+    "name": "Restful-Booker接口测试项目",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "55600993",
+    "_collection_link": "https://go.postman.co/collection/55600993-1bc763b3-2959-4bac-bbc5-7ad3ad4a28e2?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "01_健康检查",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 201\", function () {\r",
+              "    pm.response.to.have.status(201);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/ping",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "ping"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "02_登录获取 token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"状态码是 200\",function(){\r",
+              "    pm.response.to.have.status(200);\r",
+              "})\r",
+              "pm.test(\"响应体中包含 token 字段\",function(){\r",
+              "    var jsonData = pm.response.json();\r",
+              "    pm.expect(jsonData).to.have.property(\"token\");\r",
+              "});\r",
+              "pm.test(\"token 是字符串\",function(){\r",
+              "    var jsonData = pm.response.json();\r",
+              "    pm.expect(jsonData.token).to.be.a('string');\r",
+              "});\r",
+              "var jsonData = pm.response.json();\r",
+              "pm.environment.set(\"token\", jsonData.token);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"username\":\"admin\",\r\n    \"password\":\"password123\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/auth",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "03_创建booking",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var jsonData = pm.response.json();\r",
+              "pm.test(\"状态码是 200\",function(){\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "pm.test(\"返回 bookingid\",function(){\r",
+              "    pm.expect(jsonData).to.have.property(\"bookingid\");\r",
+              "});\r",
+              "pm.test(\"bookingid 是数字\",function(){\r",
+              "    pm.expect(jsonData.bookingid).to.be.a('number');\r",
+              "});\r",
+              "pm.test(\"firstname 是 Yun\",function(){ \r",
+              "    pm.expect(jsonData.booking.firstname).to.equal(\"Yun\");\r",
+              "});\r",
+              "pm.test(\"lastname 是 Tester\",function(){ \r",
+              "    pm.expect(jsonData.booking.lastname).to.equal(\"Tester\");\r",
+              "});\r",
+              "pm.test(\"totalprice 是 199\",function(){ \r",
+              "    pm.expect(jsonData.booking.totalprice).to.equal(199);\r",
+              "});\r",
+              "pm.test(\"depositpaid 是 true\",function(){ \r",
+              "    pm.expect(jsonData.booking.depositpaid).to.equal(true);\r",
+              "});\r",
+              "pm.test(\"additionalneeds 是 Breakfast\",function(){ \r",
+              "    pm.expect(jsonData.booking.additionalneeds).to.equal(\"Breakfast\");\r",
+              "});\r",
+              "pm.environment.set(\"bookingid\", jsonData.bookingid);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"firstname\": \"Yun\",\r\n  \"lastname\": \"Tester\",\r\n  \"totalprice\": 199,\r\n  \"depositpaid\": true,\r\n  \"bookingdates\": {\r\n    \"checkin\": \"2026-06-20\",\r\n    \"checkout\": \"2026-06-22\"\r\n  },\r\n  \"additionalneeds\": \"Breakfast\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/booking",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "booking"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "04_查询booking详情",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var jsonData = pm.response.json();\r",
+              "\r",
+              "pm.test(\"状态码是 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"firstname 是 Yun\", function () {\r",
+              "    pm.expect(jsonData.firstname).to.eql(\"Yun\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"lastname 是 Tester\", function () {\r",
+              "    pm.expect(jsonData.lastname).to.eql(\"Tester\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"totalprice 是 199\", function () {\r",
+              "    pm.expect(jsonData.totalprice).to.eql(199);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"depositpaid 是 true\", function () {\r",
+              "    pm.expect(jsonData.depositpaid).to.eql(true);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"checkin 是 2026-06-20\", function () {\r",
+              "    pm.expect(jsonData.bookingdates.checkin).to.eql(\"2026-06-20\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"checkout 是 2026-06-22\", function () {\r",
+              "    pm.expect(jsonData.bookingdates.checkout).to.eql(\"2026-06-22\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"additionalneeds 是 Breakfast\", function () {\r",
+              "    pm.expect(jsonData.additionalneeds).to.eql(\"Breakfast\");\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/booking/{{bookingid}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "booking",
+            "{{bookingid}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "05_更新完整booking",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "if (pm.response.code === 200) {\r",
+              "    var jsonData = pm.response.json();\r",
+              "\r",
+              "    pm.test(\"firstname 已更新\", function () {\r",
+              "        pm.expect(jsonData.firstname).to.eql(\"YunUpdated\");\r",
+              "    });\r",
+              "\r",
+              "    pm.test(\"lastname 已更新\", function () {\r",
+              "        pm.expect(jsonData.lastname).to.eql(\"TesterUpdated\");\r",
+              "    });\r",
+              "\r",
+              "    pm.test(\"totalprice 已更新\", function () {\r",
+              "        pm.expect(jsonData.totalprice).to.eql(299);\r",
+              "    });\r",
+              "\r",
+              "    pm.test(\"depositpaid 已更新\", function () {\r",
+              "        pm.expect(jsonData.depositpaid).to.eql(false);\r",
+              "    });\r",
+              "\r",
+              "    pm.test(\"checkin 已更新\", function () {\r",
+              "        pm.expect(jsonData.bookingdates.checkin).to.eql(\"2026-06-23\");\r",
+              "    });\r",
+              "\r",
+              "    pm.test(\"checkout 已更新\", function () {\r",
+              "        pm.expect(jsonData.bookingdates.checkout).to.eql(\"2026-06-25\");\r",
+              "    });\r",
+              "\r",
+              "    pm.test(\"additionalneeds 已更新\", function () {\r",
+              "        pm.expect(jsonData.additionalneeds).to.eql(\"Lunch\");\r",
+              "    });\r",
+              "}"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "password",
+              "value": "{{auth_password_1abp}}",
+              "type": "string"
+            },
+            {
+              "key": "username",
+              "value": "admin",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Cookie",
+            "value": "token={{token}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"firstname\": \"YunUpdated\",\r\n  \"lastname\": \"TesterUpdated\",\r\n  \"totalprice\": 299,\r\n  \"depositpaid\": false,\r\n  \"bookingdates\": {\r\n    \"checkin\": \"2026-06-23\",\r\n    \"checkout\": \"2026-06-25\"\r\n  },\r\n  \"additionalneeds\": \"Lunch\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/booking/{{bookingid}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "booking",
+            "{{bookingid}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "06_查询更新后的booking",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "\r",
+              "pm.test(\"状态码是 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "if(pm.response.code === 200){\r",
+              "    var jsonData = pm.response.json();\r",
+              "pm.test(\"firstname 已是 YunUpdated\", function () {\r",
+              "    pm.expect(jsonData.firstname).to.eql(\"YunUpdated\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"lastname 已是 TesterUpdated\", function () {\r",
+              "    pm.expect(jsonData.lastname).to.eql(\"TesterUpdated\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"additionalneeds 已是 Lunch\", function () {\r",
+              "    pm.expect(jsonData.additionalneeds).to.eql(\"Lunch\");\r",
+              "});\r",
+              "}"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "password",
+              "value": "{{auth_password_1abp}}",
+              "type": "string"
+            },
+            {
+              "key": "username",
+              "value": "admin",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Cookie",
+            "value": "token={{token}}",
+            "type": "text",
+            "disabled": true
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/booking/{{bookingid}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "booking",
+            "{{bookingid}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "07_删除booking",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 201\", function () {\r",
+              "    pm.response.to.have.status(201);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "password",
+              "value": "{{auth_password_1abp}}",
+              "type": "string"
+            },
+            {
+              "key": "username",
+              "value": "admin",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/booking/{{bookingid}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "booking",
+            "{{bookingid}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "08_确认booking已删除",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"状态码是 404\", function () {\r",
+              "    pm.response.to.have.status(404);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/booking/{{bookingid}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "booking",
+            "{{bookingid}}"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "auth_password_1abp",
+      "secret": true
+    }
+  ]
+}
